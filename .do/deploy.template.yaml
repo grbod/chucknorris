@@ -14,7 +14,7 @@ spec:
       health_check:
         http_path: /
       instance_count: 1
-      instance_size_slug: apps-s-1vcpu-1gb-fixed
+      instance_size_slug: apps-s-1vcpu-0.5gb
       routes:
         - path: /
       envs:

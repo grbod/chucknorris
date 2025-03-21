@@ -1,0 +1,23 @@
+# .do/deploy.template.yaml
+spec:
+  name: chuck-norris-jokes
+  region: nyc
+  services:
+    - name: flask-web
+      environment_slug: python
+      git:
+        branch: main
+        repo_clone_url: https://github.com/do-community/do-one-click-deploy-flask
+      build_command: pip install -r requirements.txt
+      run_command: gunicorn --worker-tmp-dir /dev/shm wsgi:app
+      http_port: 8080
+      health_check:
+        http_path: /
+      instance_count: 1
+      instance_size_slug: apps-s-1vcpu-1gb-fixed
+      routes:
+        - path: /
+      envs:
+        - key: FLASK_ENV
+          value: production
+          scope: RUN_TIME

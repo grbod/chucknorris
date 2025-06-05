@@ -1,0 +1,80 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test and Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install flake8 pytest
+    
+    - name: Lint with flake8
+      run: |
+        # Stop if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Test Flask app starts
+      run: |
+        python -c "from app import app; print('App imports successfully')"
+        
+  deploy:
+    name: Deploy to DigitalOcean
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to Droplet
+      env:
+        DROPLET_IP: ${{ secrets.DROPLET_IP }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        # Save SSH key
+        echo "$SSH_PRIVATE_KEY" > private_key
+        chmod 600 private_key
+        
+        # Add droplet to known hosts
+        mkdir -p ~/.ssh
+        ssh-keyscan -H $DROPLET_IP >> ~/.ssh/known_hosts
+        
+        # Deploy using rsync
+        rsync -av --exclude-from='.dockerignore' \
+          --exclude='venv' \
+          --exclude='__pycache__' \
+          --exclude='.git' \
+          --exclude='*.pyc' \
+          --exclude='.DS_Store' \
+          -e "ssh -i private_key" \
+          . root@$DROPLET_IP:/opt/chuck-norris-api/
+        
+        # Run deployment commands
+        ssh -i private_key root@$DROPLET_IP << 'EOF'
+          cd /opt/chuck-norris-api
+          docker-compose down || true
+          docker-compose up -d --build
+          echo "Deployment complete!"
+        EOF
+        
+        # Clean up
+        rm -f private_key

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a simple Flask API that serves Chuck Norris jokes from the Chuck Norris API (https://api.chucknorris.io/). The application is designed for one-click deployment to DigitalOcean App Platform.
+This is a simple Flask API that serves dad jokes from the icanhazdadjoke API (https://icanhazdadjoke.com/). The application is designed for one-click deployment to DigitalOcean App Platform.
 
 ## Architecture
 

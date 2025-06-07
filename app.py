@@ -6,8 +6,13 @@ app = Flask(__name__)
 
 @app.route("/")
 def get_joke():
-    response = requests.get("https://api.chucknorris.io/jokes/random")
-    joke = response.json().get("value", "No joke found.")
+    headers = {
+        'Accept': 'application/json',
+        'User-Agent': 'Jackie Chan Joke App (https://github.com/grbod/chucknorris)'
+    }
+    response = requests.get("https://icanhazdadjoke.com/", headers=headers)
+    joke_data = response.json()
+    joke = joke_data.get("joke", "No joke found.")
     return jsonify({"joke": joke})
 
 if __name__ == "__main__":

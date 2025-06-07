@@ -1,9 +1,9 @@
-# One-Click Deploy: Flask Chuck Norris Joke API
+# One-Click Deploy: Flask Dad Joke API
 
-This is a simple Flask API that fetches a random Chuck Norris joke and returns it as JSON. With **DigitalOcean's One-Click Deploy button**, you can instantly deploy this app in the cloud.
+This is a simple Flask API that fetches a random dad joke and returns it as JSON. With **DigitalOcean's One-Click Deploy button**, you can instantly deploy this app in the cloud.
 
 ### **How It Works**
-- When you visit `/`, the app fetches a random joke from the [Chuck Norris API](https://api.chucknorris.io/).
+- When you visit `/`, the app fetches a random dad joke from the [icanhazdadjoke API](https://icanhazdadjoke.com/).
 - Returns the joke as JSON.
 - Runs on port **8080**.
 
@@ -25,8 +25,8 @@ Click the button below to instantly deploy this app on **DigitalOcean App Platfo
 
 ### **Running Locally**
 ```bash
-git clone https://github.com/do-community/do-one-click-deploy-flask.git
-cd do-one-click-deploy-flask
+git clone https://github.com/grbod/chucknorris.git
+cd chucknorris
 pip install -r requirements.txt
 python app.py
 ```
